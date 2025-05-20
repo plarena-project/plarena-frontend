@@ -1,12 +1,12 @@
-import HeaderAdmin from "./components/headerAdmin";
+import Navbar from "./components/navbar";
+import Footer from "./components/footer";
 
 export default function AdminLayout({ children }: { children: React.ReactNode }) {
   return (
-    <html>
-        <body className="admin-page">
-            <HeaderAdmin/>
-            {children}
-        </body>
-    </html>
+    <div className="admin-page">
+      <Navbar />
+      {children}
+      <Footer />
+    </div>
   );
 }
