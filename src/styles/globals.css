@@ -2,9 +2,6 @@
 @tailwind components;
 @tailwind utilities;
 
-footer {
-    background-color: #79A900; 
-  }
   .admin-page button.bg-blue-600 {
     background-color: #407225;
   }

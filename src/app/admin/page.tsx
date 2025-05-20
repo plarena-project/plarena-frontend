@@ -26,7 +26,7 @@ const CardDashboard: FC<CardDashboardProps> = ({ imageSrc, title, count }) => {
 // Komponen AdminDashboard (default export)
 export default function AdminDashboard() {
   return (
-    <div className="min-h-screen bg-gray-100 p-8">
+    <div className="min-h-screen bg-white p-8">
       <h1 className="text-center text-3xl font-bold italic mb-10">
         <span className="text-black">Plarena</span>{" "}
         <span style={{ color: "#407225" }}>Sport</span>
