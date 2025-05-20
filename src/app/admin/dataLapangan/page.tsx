@@ -1,31 +1,45 @@
-// app/admin/dataLapangan/page.tsx
 'use client';
+
 import Image from 'next/image';
+import { useState } from 'react';
+import EditLapanganModal from '../components/editLapanganModal';
+ // Pastikan path ini sesuai dengan struktur project-mu
 
 export default function DataLapanganPage() {
-  const dataLapangan = [
-    {
-      id: 1,
-      nama: 'Emas',
-      harga: '10.000',
-      keterangan: 'Lapangan dengan kualitas Premium',
-      foto: '/image/lapangan4.jpg',
-    },
-    {
-      id: 2,
-      nama: 'Perak',
-      harga: '8.000',
-      keterangan: 'Lapangan dengan kualitas bagus',
-      foto: '/image/lapangan3.jpg',
-    },
-    {
-      id: 3,
-      nama: 'Perunggu',
-      harga: '5.000',
-      keterangan: 'Lapangan dengan kualitas Layak',
-      foto: '/image/lapangan5.jpg',
-    },
-  ];
+  const [selected, setSelected] = useState<any | null>(null);
+
+const [dataLapangan, setDataLapangan] = useState([
+  {
+    id: 1,
+    nama: 'Emas',
+    harga: '10.000',
+    keterangan: 'Lapangan dengan kualitas Premium',
+    foto: '/image/lapangan4.jpg',
+  },
+  {
+    id: 2,
+    nama: 'Perak',
+    harga: '8.000',
+    keterangan: 'Lapangan dengan kualitas bagus',
+    foto: '/image/lapangan3.jpg',
+  },
+  {
+    id: 3,
+    nama: 'Perunggu',
+    harga: '5.000',
+    keterangan: 'Lapangan dengan kualitas Layak',
+    foto: '/image/lapangan5.jpg',
+  },
+]);
+
+const handleSave = (updated: any) => {
+  const updatedList = dataLapangan.map((item) =>
+    item.id === updated.id ? updated : item
+  );
+  setDataLapangan(updatedList);
+  setSelected(null);
+};
+
 
   return (
     <div className="min-h-screen bg-white px-8 py-12">
@@ -69,7 +83,10 @@ export default function DataLapanganPage() {
                   />
                 </td>
                 <td className="py-4 px-4 space-x-2">
-                  <button className="bg-blue-500 hover:bg-blue-600 text-white text-sm px-3 py-1 rounded">
+                  <button
+                    onClick={() => setSelected(lapangan)}
+                    className="bg-blue-500 hover:bg-blue-600 text-white text-sm px-3 py-1 rounded"
+                  >
                     Edit
                   </button>
                   <button className="bg-red-500 hover:bg-red-600 text-white text-sm px-3 py-1 rounded">
@@ -82,9 +99,13 @@ export default function DataLapanganPage() {
         </table>
       </div>
 
-      <div className="mt-6 flex justify-end text-gray-600 text-sm">
-        <span>&lt; 01/20 &gt;</span>
-      </div>
+      {selected && (
+        <EditLapanganModal
+          lapangan={selected}
+          onClose={() => setSelected(null)}
+          onSave={handleSave}
+        />
+      )}
     </div>
   );
 }

@@ -12,4 +12,10 @@ footer {
   .admin-page button.bg-blue-600:hover {
     background-color: #33661c;
   }
-  
+
+  .modal-overlay {
+  position: fixed;
+  inset: 0;
+  background-color: rgba(31, 41, 55, 0.3); /* abu2 gelap transparan */
+  z-index: 9999;
+}
