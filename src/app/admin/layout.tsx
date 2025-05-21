@@ -1,9 +1,9 @@
 import Navbar from "./components/navbar";
 import Footer from "./components/footer";
 
-export default function AdminLayout({ children }: { children: React.ReactNode }) {
+export default function UserLayout({ children }: { children: React.ReactNode }) {
   return (
-    <div className="admin-page">
+    <div className="user-page">
       <Navbar />
       {children}
       <Footer />

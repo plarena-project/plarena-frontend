@@ -75,41 +75,37 @@ export default function DataPesananPage() {
         <span style={{ color: '#407225' }}>Data</span>{' '}
         <span className="text-black">Pesanan</span>
       </h1>
-      <div className="bg-gray-100 rounded-lg p-6 overflow-auto">
-        <div className="flex justify-end mb-4">
-          <button className="text-gray-600 text-sm flex items-center border px-3 py-1 rounded-lg">
-            <span className="mr-1">⚙️</span> Filter
-          </button>
-        </div>
-        <table className="w-full text-left border-collapse">
-          <thead>
-            <tr className="text-gray-600 font-medium border-b">
-              <th className="py-2 px-3">No</th>
-              <th className="py-2 px-3">Nama</th>
-              <th className="py-2 px-3">Jenis Lapangan</th>
-              <th className="py-2 px-3">Tanggal booking</th>
-              <th className="py-2 px-3">Jam Booking</th>
-              <th className="py-2 px-3">Status</th>
-              <th className="py-2 px-3">Aksi</th>
+
+      <div className="overflow-x-auto">
+        <table className="min-w-full bg-white shadow-md rounded-lg overflow-hidden">
+          <thead className="bg-gray-200">
+            <tr className="text-left text-sm font-semibold text-gray-700">
+              <th className="py-3 px-4">No</th>
+              <th className="py-3 px-4">Nama</th>
+              <th className="py-3 px-4">Jenis Lapangan</th>
+              <th className="py-3 px-4">Tanggal Booking</th>
+              <th className="py-3 px-4">Jam Booking</th>
+              <th className="py-3 px-4">Status</th>
+              <th className="py-3 px-4">Aksi</th>
             </tr>
           </thead>
           <tbody>
             {data.map((d, i) => (
               <tr key={i} className="border-b hover:bg-gray-50">
-                <td className="py-2 px-3">{i + 1}</td>
-                <td className="py-2 px-3">{d.nama}</td>
-                <td className="py-2 px-3">{d.lapangan}</td>
-                <td className="py-2 px-3">{d.tanggal}</td>
-                <td className="py-2 px-3">{d.jam}</td>
-                <td className="py-2 px-3">{d.status}</td>
-                <td className="py-2 px-3 space-x-2">
+                <td className="py-4 px-4">{i + 1}</td>
+                <td className="py-4 px-4">{d.nama}</td>
+                <td className="py-4 px-4">{d.lapangan}</td>
+                <td className="py-4 px-4">{d.tanggal}</td>
+                <td className="py-4 px-4">{d.jam}</td>
+                <td className="py-4 px-4">{d.status}</td>
+                <td className="py-4 px-4 space-x-2">
                   <button
                     onClick={() => setSelectedPesanan(d)}
-                    className="bg-blue-500 text-white px-3 py-1 rounded hover:bg-blue-600 text-sm"
+                    className="bg-blue-500 hover:bg-blue-600 text-white text-sm px-3 py-1 rounded"
                   >
                     Detail
                   </button>
-                  <button className="bg-red-500 text-white px-3 py-1 rounded hover:bg-red-600 text-sm">
+                  <button className="bg-red-500 hover:bg-red-600 text-white text-sm px-3 py-1 rounded">
                     Hapus
                   </button>
                 </td>
@@ -117,8 +113,9 @@ export default function DataPesananPage() {
             ))}
           </tbody>
         </table>
-        <div className="flex justify-end mt-4 text-sm text-gray-500">&lt; 01/20 &gt;</div>
       </div>
+
+      <div className="flex justify-end mt-4 text-sm text-gray-500">&lt; 01/20 &gt;</div>
 
       {/* Modal Detail Pesanan */}
       {selectedPesanan && (
