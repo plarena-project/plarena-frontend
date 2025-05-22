@@ -8,13 +8,13 @@ export default function LoginPage() {
   const router = useRouter();
 
   return (
-    <div className="flex flex-col min-h-screen">
-      {/* Header */}
-      <div className="bg-limeCustom h-16 w-full" />
+    <div className="flex flex-col">
+     
+     
 
       {/* Middle with background image */}
       <div
-        className="flex-grow bg-cover bg-center flex flex-col items-center justify-center relative px-4"
+       className="min-h-screen flex-grow bg-cover bg-center flex flex-col items-center justify-center relative px-4"
         style={{ backgroundImage: "url('/image/lapangan1.jpg')" }}
       >
         {/* Plarena Sport Text */}
@@ -44,7 +44,7 @@ export default function LoginPage() {
             <button
               type="button"
               onClick={() => router.push("/user/")}
-              className="bg-limeCustom text-white py-3 rounded-full hover:bg-lime-500 transition font-semibold"
+              className="bg-limeCustom text-white py-3 rounded-full hover:bg-lime-500 transition font-semibold hover:shadow-2xl hover:bg-[#5F8700] focus:outline-none focus:ring-2 focus:ring-limeCustom"
             >
               Login
             </button>
@@ -61,8 +61,7 @@ export default function LoginPage() {
         </div>
       </div>
 
-      {/* Footer */}
-      <div className="bg-limeCustom h-16 w-full" />
+       
     </div>
   );
 }
