@@ -4,9 +4,9 @@ export default function Footer() {
       <div className="container mx-auto px-6 font-bold">
 
         <div className="flex justify-center space-x-6 mb-4 text-sm">
-          <a href="#" className="hover:underline">Privacy & Policy</a>
-          <a href="#" className="hover:underline">Terms & Conditions</a>
-          <a href="#" className="hover:underline">Refund Policy</a>
+          <a href="#" className="hover:text-white">Privacy & Policy</a>
+          <a href="#" className="hover:text-white">Terms & Conditions</a>
+          <a href="#" className="hover:text-white">Refund Policy</a>
         </div>
 
         <div className="text-center border-t border-black pt-4 text-sm">
