@@ -1,111 +1,110 @@
+// app/admin/dataMember/page.tsx
 'use client';
 
-import React, { useState } from 'react';
+import { useState } from 'react';
 
-function DetailPesananModal({ pesanan, onClose, onUpdateStatus }: any) {
-  if (!pesanan) return null;
-
-  const handleStatusChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
-    onUpdateStatus({ ...pesanan, status: e.target.value });
-  };
-
-  return (
-    <div className="fixed inset-0 bg-gray-800/50 flex justify-center items-center z-50">
-      <div className="bg-white rounded-md p-6 max-w-md w-full shadow-lg">
-        <h2 className="text-center text-xl font-bold mb-4">Detail Pesanan</h2>
-        <div className="space-y-3 text-gray-700">
-          <p><strong>Nama:</strong> {pesanan.nama}</p>
-          <p><strong>Jenis Lapangan:</strong> {pesanan.lapangan}</p>
-          <p><strong>Tanggal Booking:</strong> {pesanan.tanggal}</p>
-          <p><strong>Jam Booking:</strong> {pesanan.jam}</p>
-          <p>
-            <strong>Status:</strong>{' '}
-            <select
-              value={pesanan.status}
-              onChange={handleStatusChange}
-              className="border rounded px-2 py-1"
-            >
-              <option value="DP">DP</option>
-              <option value="Lunas">Lunas</option>
-            </select>
-          </p>
-        </div>
-        <div className="flex justify-end mt-6 space-x-2">
-          <button
-            onClick={onClose}
-            className="px-4 py-2 border rounded hover:bg-gray-100"
-          >
-            Tutup
-          </button>
-        </div>
-      </div>
-    </div>
-  );
-}
-
-export default function DataPesananPage() {
-  const [data, setData] = useState([
-    { nama: 'Budi', lapangan: 'Emas', tanggal: '24 - april - 20025', jam: '07.00 - 08.00', status: 'Lunas' },
-    { nama: 'Santi', lapangan: 'Emas', tanggal: '24 - april - 20025', jam: '08.00 - 10.00', status: 'DP' },
-    { nama: 'Dika', lapangan: 'Perak', tanggal: '24 - april - 20025', jam: '10.00 - 11.00', status: 'Lunas' },
-    { nama: 'Yuma', lapangan: 'Perunggu', tanggal: '24 - april - 20025', jam: '11.00 - 13.00', status: 'Lunas' },
-    { nama: 'Puma', lapangan: 'Perak', tanggal: '24 - april - 20025', jam: '13.00 - 14.00', status: 'Lunas' },
-    { nama: 'Pak lek', lapangan: 'Perunggu', tanggal: '24 - april - 20025', jam: '14.00 - 15.00', status: 'DP' },
-    { nama: 'Irsyad', lapangan: 'Perunggu', tanggal: '24 - april - 20025', jam: '15.00 - 17.00', status: 'DP' },
-    { nama: 'Iqbal', lapangan: 'Perak', tanggal: '24 - april - 20025', jam: '17.00 - 20.00', status: 'DP' },
-    { nama: 'Pacin', lapangan: 'Emas', tanggal: '24 - april - 20025', jam: '20.00 - 21.00', status: 'Lunas' },
-    { nama: 'Ilham', lapangan: 'Emas', tanggal: '24 - april - 20025', jam: '21.00 - 22.00', status: 'Lunas' },
+export default function DataMemberPage() {
+  const [dataMember, setDataMember] = useState([
+    {
+      id: 1,
+      username: 'user1',
+      namaLengkap: 'Rizki Maulana',
+      email: 'rizki@example.com',
+      noHp: '081234567891',
+    },
+    {
+      id: 2,
+      username: 'user2',
+      namaLengkap: 'Lestari Wulandari',
+      email: 'lestari@example.com',
+      noHp: '081298761234',
+    },
+    {
+      id: 3,
+      username: 'user3',
+      namaLengkap: 'Dian Prasetyo',
+      email: 'dian@example.com',
+      noHp: '082112349876',
+    },
   ]);
 
-  const [selectedPesanan, setSelectedPesanan] = useState<any | null>(null);
+  const [selectedMember, setSelectedMember] = useState<any | null>(null);
+  const [showDeleteModal, setShowDeleteModal] = useState(false);
 
-  const handleUpdateStatus = (updatedPesanan: any) => {
-    const updatedData = data.map((d) =>
-      d.nama === updatedPesanan.nama && d.tanggal === updatedPesanan.tanggal && d.jam === updatedPesanan.jam
-        ? updatedPesanan
-        : d
+  const handleDelete = () => {
+    if (selectedMember) {
+      setDataMember(dataMember.filter((member) => member.id !== selectedMember.id));
+      setShowDeleteModal(false);
+      setSelectedMember(null);
+    }
+  };
+
+  const handleDetailChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    if (selectedMember) {
+      const { name, value } = e.target;
+      setSelectedMember({ ...selectedMember, [name]: value });
+    }
+  };
+
+  const handleSaveDetail = () => {
+    setDataMember(
+      dataMember.map((member) =>
+        member.id === selectedMember.id ? selectedMember : member
+      )
     );
-    setData(updatedData);
-    setSelectedPesanan(updatedPesanan); // Update modal juga
+    setSelectedMember(null);
   };
 
   return (
-    <main className="min-h-screen p-10 bg-white">
+    <div className="min-h-screen bg-white px-8 py-12">
       <h1 className="text-center text-3xl font-bold italic mb-10">
         <span style={{ color: '#407225' }}>Data</span>{' '}
-        <span className="text-black">Pesanan</span>
+        <span className="text-black">Member</span>
       </h1>
+
+      <div className="mb-6">
+        <button className="bg-blue-500 hover:bg-blue-600 text-white text-sm px-3 py-1 rounded">
+          Tambah Member
+        </button>
+      </div>
 
       <div className="overflow-x-auto">
         <table className="min-w-full bg-white shadow-md rounded-lg overflow-hidden">
           <thead className="bg-gray-200">
             <tr className="text-left text-sm font-semibold text-gray-700">
               <th className="py-3 px-4">No</th>
-              <th className="py-3 px-4">Nama</th>
-              <th className="py-3 px-4">Jenis Lapangan</th>
-              <th className="py-3 px-4">Tanggal Booking</th>
-              <th className="py-3 px-4">Jam Booking</th>
-              <th className="py-3 px-4">Status</th>
+              <th className="py-3 px-4">Username</th>
+              <th className="py-3 px-4">Nama Lengkap</th>
+              <th className="py-3 px-4">Email</th>
+              <th className="py-3 px-4">No HP</th>
               <th className="py-3 px-4">Aksi</th>
             </tr>
           </thead>
           <tbody>
-            {data.map((d, i) => (
-              <tr key={i} className="border-b hover:bg-gray-50">
-                <td className="py-4 px-4">{i + 1}</td>
-                <td className="py-4 px-4">{d.nama}</td>
-                <td className="py-4 px-4">{d.lapangan}</td>
-                <td className="py-4 px-4">{d.tanggal}</td>
-                <td className="py-4 px-4">{d.jam}</td>
-                <td className="py-4 px-4">{d.status}</td>
+            {dataMember.map((member, index) => (
+              <tr key={member.id} className="border-b">
+                <td className="py-4 px-4">{index + 1}</td>
+                <td className="py-4 px-4">{member.username}</td>
+                <td className="py-4 px-4">{member.namaLengkap}</td>
+                <td className="py-4 px-4">{member.email}</td>
+                <td className="py-4 px-4">{member.noHp}</td>
                 <td className="py-4 px-4 space-x-2">
                   <button
-                    onClick={() => setSelectedPesanan(d)}
-                    className="bg-blue-500 hover:bg-blue-600 text-white text-sm px-3 py-1 rounded"
+                    onClick={() => {
+                      setSelectedMember(member);
+                      setShowDeleteModal(false);
+                    }}
+                    className="bg-green-500 hover:bg-green-600 text-white text-sm px-3 py-1 rounded"
                   >
                     Detail
                   </button>
-                  <button className="bg-red-500 hover:bg-red-600 text-white text-sm px-3 py-1 rounded">
+                  <button
+                    onClick={() => {
+                      setSelectedMember(member);
+                      setShowDeleteModal(true);
+                    }}
+                    className="bg-red-500 hover:bg-red-600 text-white text-sm px-3 py-1 rounded"
+                  >
                     Hapus
                   </button>
                 </td>
@@ -115,16 +114,97 @@ export default function DataPesananPage() {
         </table>
       </div>
 
-      <div className="flex justify-end mt-4 text-sm text-gray-500">&lt; 01/20 &gt;</div>
-
-      {/* Modal Detail Pesanan */}
-      {selectedPesanan && (
-        <DetailPesananModal
-          pesanan={selectedPesanan}
-          onClose={() => setSelectedPesanan(null)}
-          onUpdateStatus={handleUpdateStatus}
-        />
+      {/* Modal Detail */}
+      {selectedMember && !showDeleteModal && (
+        <div className="fixed inset-0 bg-black bg-opacity-50 flex justify-center items-center z-50">
+          <div className="bg-white p-6 rounded-lg shadow-md w-full max-w-md">
+            <h2 className="text-lg font-bold mb-4">Detail Member</h2>
+            <div className="space-y-3">
+              <div>
+                <label className="block text-sm font-medium">Username</label>
+                <input
+                  type="text"
+                  name="username"
+                  value={selectedMember.username}
+                  onChange={handleDetailChange}
+                  className="w-full border px-2 py-1 rounded"
+                />
+              </div>
+              <div>
+                <label className="block text-sm font-medium">Nama Lengkap</label>
+                <input
+                  type="text"
+                  name="namaLengkap"
+                  value={selectedMember.namaLengkap}
+                  onChange={handleDetailChange}
+                  className="w-full border px-2 py-1 rounded"
+                />
+              </div>
+              <div>
+                <label className="block text-sm font-medium">Email</label>
+                <input
+                  type="email"
+                  name="email"
+                  value={selectedMember.email}
+                  onChange={handleDetailChange}
+                  className="w-full border px-2 py-1 rounded"
+                />
+              </div>
+              <div>
+                <label className="block text-sm font-medium">No HP</label>
+                <input
+                  type="text"
+                  name="noHp"
+                  value={selectedMember.noHp}
+                  onChange={handleDetailChange}
+                  className="w-full border px-2 py-1 rounded"
+                />
+              </div>
+            </div>
+            <div className="flex justify-end mt-4 space-x-2">
+              <button
+                onClick={() => setSelectedMember(null)}
+                className="border px-4 py-2 rounded hover:bg-gray-100"
+              >
+                Tutup
+              </button>
+              <button
+                onClick={handleSaveDetail}
+                className="bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600"
+              >
+                Simpan
+              </button>
+            </div>
+          </div>
+        </div>
       )}
-    </main>
+
+      {/* Modal Hapus */}
+      {showDeleteModal && selectedMember && (
+        <div className="fixed inset-0 bg-black bg-opacity-50 flex justify-center items-center z-50">
+          <div className="bg-white p-6 rounded-lg shadow-md w-full max-w-sm">
+            <h2 className="text-lg font-bold mb-4">Konfirmasi Hapus</h2>
+            <p>Apakah kamu yakin ingin menghapus member <strong>{selectedMember.namaLengkap}</strong>?</p>
+            <div className="flex justify-end mt-6 space-x-2">
+              <button
+                onClick={() => {
+                  setShowDeleteModal(false);
+                  setSelectedMember(null);
+                }}
+                className="border px-4 py-2 rounded hover:bg-gray-100"
+              >
+                Batal
+              </button>
+              <button
+                onClick={handleDelete}
+                className="bg-red-500 text-white px-4 py-2 rounded hover:bg-red-600"
+              >
+                Hapus
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+    </div>
   );
 }
