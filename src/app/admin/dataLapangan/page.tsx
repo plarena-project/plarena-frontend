@@ -1,13 +1,13 @@
-"use client";
+'use client';
 
 import Image from "next/image";
 import { useState } from "react";
 import EditLapanganModal from "../components/editLapanganModal";
 import { Lapangan } from "app/types/Lapangan";
-// Pastikan path ini sesuai dengan struktur project-mu
 
 export default function DataLapanganPage() {
   const [selected, setSelected] = useState<Lapangan | null>(null);
+  const [lapanganToDelete, setLapanganToDelete] = useState<Lapangan | null>(null);
   const [dataLapangan, setDataLapangan] = useState<Lapangan[]>([
     {
       id: 1,
@@ -33,19 +33,30 @@ export default function DataLapanganPage() {
   ]);
 
   const handleSave = (updated: Lapangan) => {
-    const updatedList = dataLapangan.map((item) => (item.id === updated.id ? updated : item));
+    const updatedList = dataLapangan.map((item) =>
+      item.id === updated.id ? updated : item
+    );
     setDataLapangan(updatedList);
     setSelected(null);
+  };
+
+  const handleDelete = () => {
+    if (!lapanganToDelete) return;
+    setDataLapangan((prev) => prev.filter((item) => item.id !== lapanganToDelete.id));
+    setLapanganToDelete(null);
   };
 
   return (
     <div className="min-h-screen bg-white px-8 py-12">
       <h1 className="text-center text-3xl font-bold italic mb-10">
-        <span style={{ color: "#407225" }}>Data</span> <span className="text-black">Lapangan</span>
+        <span style={{ color: "#407225" }}>Data</span>{" "}
+        <span className="text-black">Lapangan</span>
       </h1>
 
       <div className="mb-6">
-        <button className="bg-blue-500 hover:bg-blue-600 text-white text-sm px-3 py-1 rounded">Tambah</button>
+        <button className="bg-blue-500 hover:bg-blue-600 text-white text-sm px-3 py-1 rounded">
+          Tambah
+        </button>
       </div>
 
       <div className="overflow-x-auto">
@@ -68,13 +79,27 @@ export default function DataLapanganPage() {
                 <td className="py-4 px-4">{lapangan.harga}</td>
                 <td className="py-4 px-4">{lapangan.keterangan}</td>
                 <td className="py-4 px-4">
-                  <Image src={lapangan.foto} alt={lapangan.nama} width={100} height={60} className="rounded-md object-cover" />
+                  <Image
+                    src={lapangan.foto}
+                    alt={lapangan.nama}
+                    width={100}
+                    height={60}
+                    className="rounded-md object-cover"
+                  />
                 </td>
                 <td className="py-4 px-4 space-x-2">
-                  <button onClick={() => setSelected(lapangan)} className="bg-blue-500 hover:bg-blue-600 text-white text-sm px-3 py-1 rounded">
+                  <button
+                    onClick={() => setSelected(lapangan)}
+                    className="bg-blue-500 hover:bg-blue-600 text-white text-sm px-3 py-1 rounded"
+                  >
                     Edit
                   </button>
-                  <button className="bg-red-500 hover:bg-red-600 text-white text-sm px-3 py-1 rounded">Hapus</button>
+                  <button
+                    onClick={() => setLapanganToDelete(lapangan)}
+                    className="bg-red-500 hover:bg-red-600 text-white text-sm px-3 py-1 rounded"
+                  >
+                    Hapus
+                  </button>
                 </td>
               </tr>
             ))}
@@ -82,7 +107,38 @@ export default function DataLapanganPage() {
         </table>
       </div>
 
-      {selected && <EditLapanganModal lapangan={selected} onClose={() => setSelected(null)} onSave={handleSave} />}
+      {selected && (
+        <EditLapanganModal
+          lapangan={selected}
+          onClose={() => setSelected(null)}
+          onSave={handleSave}
+        />
+      )}
+
+      {lapanganToDelete && (
+        <div className="fixed inset-0 bg-black/50 z-50 flex items-center justify-center">
+          <div className="bg-white p-6 rounded-md shadow-md w-96 text-center space-y-4">
+            <h2 className="text-lg font-semibold text-red-600">Yakin ingin menghapus?</h2>
+            <p className="text-gray-600 text-sm">
+              Lapangan <strong>{lapanganToDelete.nama}</strong> akan dihapus secara permanen.
+            </p>
+            <div className="flex justify-center gap-4 mt-4">
+              <button
+                onClick={() => setLapanganToDelete(null)}
+                className="px-4 py-1 bg-gray-300 rounded hover:bg-gray-400"
+              >
+                Batal
+              </button>
+              <button
+                onClick={handleDelete}
+                className="px-4 py-1 bg-red-500 text-white rounded hover:bg-red-600"
+              >
+                Hapus
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 }

@@ -41,18 +41,14 @@ function formatRupiah(angka: number) {
 }
 
 export default function PembayaranPage() {
-  const [data] = useState([
+  const [data, setData] = useState([
     { nama: 'Budi', lapangan: 'Emas', tanggal: '24 - April - 2025', jam: '07.00 - 08.00' },
     { nama: 'Santi', lapangan: 'Emas', tanggal: '24 - April - 2025', jam: '08.00 - 10.00' },
-    { nama: 'Dika', lapangan: 'Perak', tanggal: '24 - April - 2025', jam: '10.00 - 11.00' },
-    { nama: 'Yuma', lapangan: 'Perunggu', tanggal: '24 - April - 2025', jam: '11.00 - 13.00' },
-    { nama: 'Puma', lapangan: 'Perak', tanggal: '24 - April - 2025', jam: '13.00 - 14.00' },
-    { nama: 'Pak lek', lapangan: 'Perunggu', tanggal: '24 - April - 2025', jam: '14.00 - 15.00' },
-    { nama: 'Irsyad', lapangan: 'Perunggu', tanggal: '24 - April - 2025', jam: '15.00 - 17.00' },
-    { nama: 'Iqbal', lapangan: 'Perak', tanggal: '24 - April - 2025', jam: '17.00 - 20.00' },
-    { nama: 'Pacin', lapangan: 'Emas', tanggal: '24 - April - 2025', jam: '20.00 - 21.00' },
-    { nama: 'Ilham', lapangan: 'Emas', tanggal: '24 - April - 2025', jam: '21.00 - 22.00' },
   ]);
+
+  const [popupIndex, setPopupIndex] = useState<number | null>(null);
+  const [confirmDelete, setConfirmDelete] = useState<number | null>(null);
+  const [buktiBayar, setBuktiBayar] = useState<File | null>(null);
 
   return (
     <main className="min-h-screen p-10 bg-white">
@@ -86,10 +82,16 @@ export default function PembayaranPage() {
                 <td className="py-4 px-4">{ambilJamHabis(d.jam)}</td>
                 <td className="py-4 px-4">{formatRupiah(hitungTotal(d.jam, d.lapangan))}</td>
                 <td className="py-4 px-4 space-x-2">
-                  <button className="bg-blue-600 hover:bg-blue-700 text-white text-sm px-3 py-1 rounded">
+                  <button
+                    onClick={() => setPopupIndex(i)}
+                    className="bg-blue-600 hover:bg-blue-700 text-white text-sm px-3 py-1 rounded"
+                  >
                     Bayar
                   </button>
-                  <button className="bg-red-600 hover:bg-red-700 text-white text-sm px-3 py-1 rounded">
+                  <button
+                    onClick={() => setConfirmDelete(i)}
+                    className="bg-red-600 hover:bg-red-700 text-white text-sm px-3 py-1 rounded"
+                  >
                     Batal
                   </button>
                 </td>
@@ -98,6 +100,102 @@ export default function PembayaranPage() {
           </tbody>
         </table>
       </div>
+
+      {/* MODAL PEMBAYARAN */}
+      {popupIndex !== null && (
+        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
+          <div className="bg-white w-[500px] p-6 rounded-xl relative">
+            <button
+              className="absolute top-3 right-3 text-2xl font-bold text-gray-600"
+              onClick={() => setPopupIndex(null)}
+            >
+              &times;
+            </button>
+            <h2 className="text-xl font-bold text-center mb-4">
+              Pesan Lapangan {data[popupIndex].lapangan.toUpperCase()}
+            </h2>
+
+            <div className="space-y-2 text-sm">
+              <p>
+                <strong>Jam Main:</strong> {data[popupIndex].jam.split(' - ')[0]}
+              </p>
+              <p>
+                <strong>Lama Main:</strong> {hitungDurasi(data[popupIndex].jam)} Jam
+              </p>
+              <p>
+                <strong>Jam Habis:</strong> {ambilJamHabis(data[popupIndex].jam)}
+              </p>
+              <p>
+                <strong>Total:</strong>{' '}
+                <span className="text-red-600 font-bold">
+                  {formatRupiah(hitungTotal(data[popupIndex].jam, data[popupIndex].lapangan))}
+                </span>
+              </p>
+              <p>
+                <strong>Transfer Ke:</strong> DANA 089269744637 a/n Plarena Sport Center
+              </p>
+
+              <div>
+                <label className="block mb-1">Upload Bukti Transfer</label>
+                <input
+                  type="file"
+                  onChange={(e) => setBuktiBayar(e.target.files?.[0] || null)}
+                  className="border w-full p-1 rounded"
+                />
+              </div>
+
+              <div className="text-red-600 border border-red-400 p-2 text-center rounded">
+                STATUS: BELUM DIBAYAR
+              </div>
+
+              <button
+                onClick={() => {
+                  alert('Pembayaran berhasil disubmit!');
+                  setPopupIndex(null);
+                }}
+                className="w-full mt-4 bg-green-500 hover:bg-green-600 text-white py-2 rounded"
+              >
+                Bayar
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* MODAL KONFIRMASI BATAL */}
+      {confirmDelete !== null && (
+        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
+          <div className="bg-white p-6 rounded-lg w-[400px] text-center relative">
+            <h2 className="text-lg font-semibold mb-4">
+              Yakin ingin membatalkan bookingan ini?
+            </h2>
+            <p className="text-sm mb-6">
+              Bookingan atas nama <strong>{data[confirmDelete].nama}</strong> di Lapangan{' '}
+              <strong>{data[confirmDelete].lapangan}</strong> tanggal{' '}
+              <strong>{data[confirmDelete].tanggal}</strong>
+            </p>
+            <div className="flex justify-center gap-4">
+              <button
+                onClick={() => {
+                  const newData = [...data];
+                  newData.splice(confirmDelete, 1);
+                  setData(newData);
+                  setConfirmDelete(null);
+                }}
+                className="bg-red-500 hover:bg-red-600 text-white px-4 py-2 rounded"
+              >
+                Ya, Batalkan
+              </button>
+              <button
+                onClick={() => setConfirmDelete(null)}
+                className="bg-gray-300 hover:bg-gray-400 px-4 py-2 rounded"
+              >
+                Batal
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
     </main>
   );
 }

@@ -2,6 +2,7 @@
 
 import React, { useState } from 'react';
 
+// === MODAL DETAIL PESANAN ===
 function DetailPesananModal({ pesanan, onClose, onUpdateStatus }: any) {
   if (!pesanan) return null;
 
@@ -10,9 +11,9 @@ function DetailPesananModal({ pesanan, onClose, onUpdateStatus }: any) {
   };
 
   return (
-    <div className="fixed inset-0 bg-gray-800/50 flex justify-center items-center z-50">
-      <div className="bg-white rounded-md p-6 max-w-md w-full shadow-lg">
-        <h2 className="text-center text-xl font-bold mb-4">Detail Pesanan</h2>
+    <div className="fixed inset-0 bg-black/30 flex justify-center items-center z-50 backdrop-blur-sm">
+      <div className="bg-white rounded-lg p-6 max-w-md w-full shadow-lg animate-fade-in">
+        <h2 className="text-center text-2xl font-bold mb-4">📋 Detail Pesanan</h2>
         <div className="space-y-3 text-gray-700">
           <p><strong>Nama:</strong> {pesanan.nama}</p>
           <p><strong>Jenis Lapangan:</strong> {pesanan.lapangan}</p>
@@ -43,6 +44,36 @@ function DetailPesananModal({ pesanan, onClose, onUpdateStatus }: any) {
   );
 }
 
+// === MODAL KONFIRMASI HAPUS ===
+function ConfirmDeleteModal({ pesanan, onCancel, onConfirm }: any) {
+  return (
+    <div className="fixed inset-0 bg-black/40 flex justify-center items-center z-50 backdrop-blur-sm">
+      <div className="bg-white p-6 rounded-xl shadow-xl text-center max-w-sm w-full animate-fade-in">
+        <h2 className="text-2xl font-bold mb-2">🗑️ Hapus Pesanan?</h2>
+        <p className="text-gray-600 mb-4">
+          Yakin ingin menghapus pesanan atas nama <strong>{pesanan.nama}</strong>?<br />
+          Tindakan ini tidak bisa dibatalkan 😢
+        </p>
+        <div className="flex justify-center gap-4">
+          <button
+            onClick={onCancel}
+            className="px-4 py-2 bg-gray-200 hover:bg-gray-300 rounded"
+          >
+            Batal
+          </button>
+          <button
+            onClick={onConfirm}
+            className="px-4 py-2 bg-red-500 hover:bg-red-600 text-white rounded"
+          >
+            Ya, Hapus!
+          </button>
+        </div>
+      </div>
+    </div>
+  );
+}
+
+// === HALAMAN UTAMA ===
 export default function DataPesananPage() {
   const [data, setData] = useState([
     { nama: 'Budi', lapangan: 'Emas', tanggal: '24 - april - 20025', jam: '07.00 - 08.00', status: 'Lunas' },
@@ -58,6 +89,7 @@ export default function DataPesananPage() {
   ]);
 
   const [selectedPesanan, setSelectedPesanan] = useState<any | null>(null);
+  const [deleteTarget, setDeleteTarget] = useState<any | null>(null);
 
   const handleUpdateStatus = (updatedPesanan: any) => {
     const updatedData = data.map((d) =>
@@ -66,7 +98,14 @@ export default function DataPesananPage() {
         : d
     );
     setData(updatedData);
-    setSelectedPesanan(updatedPesanan); // Update modal juga
+    setSelectedPesanan(updatedPesanan); // update modal juga
+  };
+
+  const handleDelete = (target: any) => {
+    setData(data.filter(d =>
+      !(d.nama === target.nama && d.tanggal === target.tanggal && d.jam === target.jam)
+    ));
+    setDeleteTarget(null);
   };
 
   return (
@@ -105,7 +144,10 @@ export default function DataPesananPage() {
                   >
                     Detail
                   </button>
-                  <button className="bg-red-500 hover:bg-red-600 text-white text-sm px-3 py-1 rounded">
+                  <button
+                    onClick={() => setDeleteTarget(d)}
+                    className="bg-red-500 hover:bg-red-600 text-white text-sm px-3 py-1 rounded"
+                  >
                     Hapus
                   </button>
                 </td>
@@ -117,12 +159,19 @@ export default function DataPesananPage() {
 
       <div className="flex justify-end mt-4 text-sm text-gray-500">&lt; 01/20 &gt;</div>
 
-      {/* Modal Detail Pesanan */}
       {selectedPesanan && (
         <DetailPesananModal
           pesanan={selectedPesanan}
           onClose={() => setSelectedPesanan(null)}
           onUpdateStatus={handleUpdateStatus}
+        />
+      )}
+
+      {deleteTarget && (
+        <ConfirmDeleteModal
+          pesanan={deleteTarget}
+          onCancel={() => setDeleteTarget(null)}
+          onConfirm={() => handleDelete(deleteTarget)}
         />
       )}
     </main>
