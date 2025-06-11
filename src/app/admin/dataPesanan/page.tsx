@@ -88,8 +88,15 @@ export default function DataPesananPage() {
     { nama: 'Ilham', lapangan: 'Emas', tanggal: '24 - april - 20025', jam: '21.00 - 22.00', status: 'Lunas' },
   ]);
 
+  const [searchTerm, setSearchTerm] = useState('');
   const [selectedPesanan, setSelectedPesanan] = useState<any | null>(null);
   const [deleteTarget, setDeleteTarget] = useState<any | null>(null);
+
+  const filteredData = data.filter((d) =>
+    `${d.nama} ${d.lapangan} ${d.tanggal} ${d.jam}`
+      .toLowerCase()
+      .includes(searchTerm.toLowerCase())
+  );
 
   const handleUpdateStatus = (updatedPesanan: any) => {
     const updatedData = data.map((d) =>
@@ -98,7 +105,7 @@ export default function DataPesananPage() {
         : d
     );
     setData(updatedData);
-    setSelectedPesanan(updatedPesanan); // update modal juga
+    setSelectedPesanan(updatedPesanan);
   };
 
   const handleDelete = (target: any) => {
@@ -115,6 +122,16 @@ export default function DataPesananPage() {
         <span className="text-black">Pesanan</span>
       </h1>
 
+      <div className="mb-6 flex justify-between items-center">
+        <input
+          type="text"
+          placeholder="🔍 Cari nama, lapangan, tanggal..."
+          className="w-full md:w-1/3 px-4 py-2 border border-gray-300 rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-green-500"
+          value={searchTerm}
+          onChange={(e) => setSearchTerm(e.target.value)}
+        />
+      </div>
+
       <div className="overflow-x-auto">
         <table className="min-w-full bg-white shadow-md rounded-lg overflow-hidden">
           <thead className="bg-gray-200">
@@ -129,30 +146,38 @@ export default function DataPesananPage() {
             </tr>
           </thead>
           <tbody>
-            {data.map((d, i) => (
-              <tr key={i} className="border-b hover:bg-gray-50">
-                <td className="py-4 px-4">{i + 1}</td>
-                <td className="py-4 px-4">{d.nama}</td>
-                <td className="py-4 px-4">{d.lapangan}</td>
-                <td className="py-4 px-4">{d.tanggal}</td>
-                <td className="py-4 px-4">{d.jam}</td>
-                <td className="py-4 px-4">{d.status}</td>
-                <td className="py-4 px-4 space-x-2">
-                  <button
-                    onClick={() => setSelectedPesanan(d)}
-                    className="bg-blue-500 hover:bg-blue-600 text-white text-sm px-3 py-1 rounded"
-                  >
-                    Detail
-                  </button>
-                  <button
-                    onClick={() => setDeleteTarget(d)}
-                    className="bg-red-500 hover:bg-red-600 text-white text-sm px-3 py-1 rounded"
-                  >
-                    Hapus
-                  </button>
+            {filteredData.length > 0 ? (
+              filteredData.map((d, i) => (
+                <tr key={i} className="border-b hover:bg-gray-50">
+                  <td className="py-4 px-4">{i + 1}</td>
+                  <td className="py-4 px-4">{d.nama}</td>
+                  <td className="py-4 px-4">{d.lapangan}</td>
+                  <td className="py-4 px-4">{d.tanggal}</td>
+                  <td className="py-4 px-4">{d.jam}</td>
+                  <td className="py-4 px-4">{d.status}</td>
+                  <td className="py-4 px-4 space-x-2">
+                    <button
+                      onClick={() => setSelectedPesanan(d)}
+                      className="bg-blue-500 hover:bg-blue-600 text-white text-sm px-3 py-1 rounded"
+                    >
+                      Detail
+                    </button>
+                    <button
+                      onClick={() => setDeleteTarget(d)}
+                      className="bg-red-500 hover:bg-red-600 text-white text-sm px-3 py-1 rounded"
+                    >
+                      Hapus
+                    </button>
+                  </td>
+                </tr>
+              ))
+            ) : (
+              <tr>
+                <td colSpan={7} className="text-center py-6 text-gray-500">
+                  Tidak ada hasil ditemukan.
                 </td>
               </tr>
-            ))}
+            )}
           </tbody>
         </table>
       </div>
