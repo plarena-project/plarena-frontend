@@ -3,6 +3,7 @@
 import { useState } from "react";
 import Image from "next/image";
 import Link from "next/link";
+import { motion } from "framer-motion";
 
 interface Lapangan {
   imageSrc: string;
@@ -69,42 +70,61 @@ export default function UserDashboard() {
 
       <div className="flex flex-col md:flex-row justify-around gap-6">
         {lapanganData.map((lapangan, index) => (
-          <div key={index} className="bg-white rounded-lg shadow-md p-4 w-full md:w-1/3">
-            <div className="w-full h-48 relative mb-4">
+          <motion.div
+            key={index}
+            className="bg-white rounded-lg shadow-md p-4 w-full md:w-1/3 transform hover:scale-105 hover:shadow-xl transition-all duration-300 ease-in-out group cursor-pointer"
+            initial={{ opacity: 0, y: 40 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.6, delay: index * 0.2 }}
+          >
+            <div className="w-full h-48 relative mb-4 overflow-hidden rounded-md">
               <Image
                 src={lapangan.imageSrc}
                 alt={lapangan.namaLapangan}
                 layout="fill"
                 objectFit="cover"
-                className="rounded-md"
+                className="group-hover:scale-110 transition-transform duration-300 ease-in-out"
               />
+              <div className="absolute inset-0 bg-black bg-opacity-10 group-hover:bg-opacity-20 transition-all duration-300 rounded-md" />
             </div>
-            <h3 className="text-md font-semibold">{lapangan.namaLapangan}</h3>
-            <p className="text-lg font-bold mb-4">
-              Rp {lapangan.harga.toLocaleString()} <span className="text-sm font-normal">/jam</span>
+            <h3 className="text-md font-semibold group-hover:text-green-800 transition-colors">
+              {lapangan.namaLapangan}
+            </h3>
+            <p className="text-lg font-bold mb-4 group-hover:text-green-700 transition-colors">
+              Rp {lapangan.harga.toLocaleString()}{" "}
+              <span className="text-sm font-normal text-gray-600">/jam</span>
             </p>
             <div className="flex flex-row gap-2">
-              <Link href="/user/lapangan/jadwalLapangan">
-                <button className="border border-green-700 text-green-700 px-4 py-1 rounded hover:bg-green-100 transition">
-                  Jadwal
-                </button>
-              </Link>
+              <motion.div whileHover={{ scale: 1.05 }}>
+                <Link href="/user/lapangan/jadwalLapangan">
+                  <button className="border border-green-700 text-green-700 px-4 py-1 rounded hover:bg-green-100 transition">
+                    Jadwal
+                  </button>
+                </Link>
+              </motion.div>
 
-              <button
-                className="bg-limeCustom text-white px-4 py-1 rounded hover:brightness-110 transition"
-                onClick={() => handlePesanClick(lapangan)}
-              >
-                Pesan
-              </button>
+              <motion.div whileHover={{ scale: 1.05 }}>
+                <button
+                  className="bg-limeCustom text-white px-4 py-1 rounded hover:brightness-110 transition"
+                  onClick={() => handlePesanClick(lapangan)}
+                >
+                  Pesan
+                </button>
+              </motion.div>
             </div>
-          </div>
+          </motion.div>
         ))}
       </div>
 
       {/* MODAL */}
       {showModal && selectedLapangan && (
         <div className="fixed inset-0 bg-black bg-opacity-50 flex justify-center items-center z-50">
-          <div className="bg-white rounded-lg shadow-lg w-full max-w-md p-6 relative">
+          <motion.div
+            className="bg-white rounded-lg shadow-lg w-full max-w-md p-6 relative"
+            initial={{ scale: 0.8, opacity: 0 }}
+            animate={{ scale: 1, opacity: 1 }}
+            transition={{ duration: 0.3 }}
+          >
             <button
               onClick={handleCloseModal}
               className="absolute top-3 right-3 text-2xl font-bold text-gray-500 hover:text-black"
@@ -169,7 +189,7 @@ export default function UserDashboard() {
                 Pesan
               </button>
             </div>
-          </div>
+          </motion.div>
         </div>
       )}
     </div>
