@@ -1,29 +1,44 @@
 'use client';
 
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 
-function hitungDurasi(jam: string) {
-  const [start, end] = jam.split(' - ').map((j) => parseInt(j.replace('.', '')));
-  return (end - start) / 100;
+interface Jadwal {
+  id_jadwal: number;
+  tanggal_pesan: string;
+  nama_pemesan: string;
+  jenis_lapangan: string;
+  jam_main: string;
+  lama_sewa: string;
+  jam_habis: string;
+  status: string;
 }
 
-function ambilJamHabis(jam: string) {
-  return jam.split(' - ')[1];
-}
+export default function DashboardUserPage() {
+  const [jadwal, setJadwal] = useState<Jadwal[]>([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
 
-export default function DataPesananPage() {
-  const [data] = useState([
-    { nama: 'Budi', lapangan: 'Emas', tanggal: '24 - April - 2025', jam: '07.00 - 08.00', status: 'Lunas' },
-    { nama: 'Santi', lapangan: 'Emas', tanggal: '24 - April - 2025', jam: '08.00 - 10.00', status: 'DP' },
-    { nama: 'Dika', lapangan: 'Perak', tanggal: '24 - April - 2025', jam: '10.00 - 11.00', status: 'Lunas' },
-    { nama: 'Yuma', lapangan: 'Perunggu', tanggal: '24 - April - 2025', jam: '11.00 - 13.00', status: 'Lunas' },
-    { nama: 'Puma', lapangan: 'Perak', tanggal: '24 - April - 2025', jam: '13.00 - 14.00', status: 'Lunas' },
-    { nama: 'Pak lek', lapangan: 'Perunggu', tanggal: '24 - April - 2025', jam: '14.00 - 15.00', status: 'DP' },
-    { nama: 'Irsyad', lapangan: 'Perunggu', tanggal: '24 - April - 2025', jam: '15.00 - 17.00', status: 'DP' },
-    { nama: 'Iqbal', lapangan: 'Perak', tanggal: '24 - April - 2025', jam: '17.00 - 20.00', status: 'DP' },
-    { nama: 'Pacin', lapangan: 'Emas', tanggal: '24 - April - 2025', jam: '20.00 - 21.00', status: 'Lunas' },
-    { nama: 'Ilham', lapangan: 'Emas', tanggal: '24 - April - 2025', jam: '21.00 - 22.00', status: 'Lunas' },
-  ]);
+  useEffect(() => {
+    fetch('http://127.0.0.1:8000/api/jadwal')
+      .then((res) => {
+        if (!res.ok) throw new Error('Gagal mengambil data jadwal');
+        return res.json();
+      })
+      .then((data) => {
+        if (Array.isArray(data)) {
+          setJadwal(data);
+        } else if (Array.isArray(data.data)) {
+          setJadwal(data.data);
+        } else {
+          throw new Error('Format data tidak sesuai');
+        }
+        setLoading(false);
+      })
+      .catch((err) => {
+        setError(err.message);
+        setLoading(false);
+      });
+  }, []);
 
   return (
     <main className="min-h-screen p-10 bg-white">
@@ -32,40 +47,46 @@ export default function DataPesananPage() {
         <span className="text-black">Lapangan</span>
       </h1>
 
-      <div className="overflow-x-auto">
-        <table className="min-w-full bg-white shadow-md rounded-lg overflow-hidden">
-          <thead className="bg-gray-200">
-            <tr className="text-left text-sm font-semibold text-gray-700">
-              <th className="py-3 px-4">No. Reservasi</th>
-              <th className="py-3 px-4">Tanggal Pesan</th>
-              <th className="py-3 px-4">Nama Pemesan</th>
-              <th className="py-3 px-4">Nama Lapangan</th>
-              <th className="py-3 px-4">Jam Main</th>
-              <th className="py-3 px-4">Lama Sewa</th>
-              <th className="py-3 px-4">Jam Habis</th>
-              <th className="py-3 px-4">Status</th>
-            </tr>
-          </thead>
-          <tbody>
-            {data.map((d, i) => (
-              <tr key={i} className="border-b hover:bg-gray-50 text-sm">
-                <td className="py-4 px-4">{i + 1}</td>
-                <td className="py-4 px-4">{d.tanggal}</td>
-                <td className="py-4 px-4">{d.nama}</td>
-                <td className="py-4 px-4">{d.lapangan}</td>
-                <td className="py-4 px-4">{d.jam.split(' - ')[0]}</td>
-                <td className="py-4 px-4">{hitungDurasi(d.jam)} Jam</td>
-                <td className="py-4 px-4">{ambilJamHabis(d.jam)}</td>
-                <td className="py-4 px-4">
-                  <button className="bg-green-600 hover:bg-green-700 text-white text-sm px-4 py-1 rounded">
-                    Booked
-                  </button>
-                </td>
+      {loading ? (
+        <p className="text-center">Memuat data...</p>
+      ) : error ? (
+        <p className="text-center text-red-600">Terjadi kesalahan: {error}</p>
+      ) : (
+        <div className="overflow-x-auto">
+          <table className="min-w-full bg-white shadow-md rounded-lg overflow-hidden">
+            <thead className="bg-gray-200">
+              <tr className="text-left text-sm font-semibold text-gray-700">
+                <th className="py-3 px-4">No. Reservasi</th>
+                <th className="py-3 px-4">Tanggal Pesan</th>
+                <th className="py-3 px-4">Nama Pemesan</th>
+                <th className="py-3 px-4">Jenis Lapangan</th>
+                <th className="py-3 px-4">Jam Main</th>
+                <th className="py-3 px-4">Lama Sewa</th>
+                <th className="py-3 px-4">Jam Habis</th>
+                <th className="py-3 px-4">Status</th>
               </tr>
-            ))}
-          </tbody>
-        </table>
-      </div>
+            </thead>
+            <tbody>
+              {jadwal.map((d, i) => (
+                <tr key={d.id_jadwal} className="border-b hover:bg-gray-50 text-sm">
+                  <td className="py-4 px-4">{i + 1}</td>
+                  <td className="py-4 px-4">{d.tanggal_pesan}</td>
+                  <td className="py-4 px-4">{d.nama_pemesan}</td>
+                  <td className="py-4 px-4">{d.jenis_lapangan}</td>
+                  <td className="py-4 px-4">{d.jam_main.slice(0, 5)}</td>
+                  <td className="py-4 px-4">{d.lama_sewa.slice(0, 5)} Jam</td>
+                  <td className="py-4 px-4">{d.jam_habis.slice(0, 5)}</td>
+                  <td className="py-4 px-4">
+                    <button className={`text-white text-sm px-4 py-1 rounded ${d.status === 'booked' ? 'bg-green-600 hover:bg-green-700' : 'bg-yellow-500 hover:bg-yellow-600'}`}>
+                      {d.status}
+                    </button>
+                  </td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </div>
+      )}
     </main>
   );
 }
