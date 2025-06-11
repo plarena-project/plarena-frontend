@@ -4,7 +4,6 @@ import { useState } from "react";
 import Image from "next/image";
 import Link from "next/link";
 
-
 export default function LapanganPage() {
   const [showModal, setShowModal] = useState(false);
   const [selectedLapangan, setSelectedLapangan] = useState<{
@@ -14,6 +13,7 @@ export default function LapanganPage() {
   } | null>(null);
   const [tanggal, setTanggal] = useState("");
   const [jam, setJam] = useState("");
+  const [durasi, setDurasi] = useState("");
 
   const lapanganData = [
     {
@@ -43,14 +43,18 @@ export default function LapanganPage() {
     setSelectedLapangan(null);
     setTanggal("");
     setJam("");
+    setDurasi("");
   };
 
   const handleSubmitPesan = () => {
-    if (!tanggal || !jam) {
-      alert("Harap isi tanggal dan jam main.");
+    if (!tanggal || !jam || !durasi || parseInt(durasi) < 1 || parseInt(durasi) > 12) {
+      alert("Harap isi tanggal, jam, dan durasi main (1-12 jam).");
       return;
     }
-    alert(`Berhasil memesan ${selectedLapangan?.namaLapangan} pada ${tanggal} jam ${jam}`);
+
+    alert(
+      `Berhasil memesan ${selectedLapangan?.namaLapangan} pada ${tanggal} jam ${jam} selama ${durasi} jam.`
+    );
     handleCloseModal();
   };
 
@@ -133,6 +137,18 @@ export default function LapanganPage() {
                 onChange={(e) => setJam(e.target.value)}
                 className="border rounded px-2 py-1"
               />
+
+              <label className="text-sm font-semibold">Jam Main (Durasi)</label>
+              <input
+                type="number"
+                min="1"
+                max="12"
+                value={durasi}
+                onChange={(e) => setDurasi(e.target.value)}
+                className="border rounded px-2 py-1"
+                placeholder="Misal: 2"
+              />
+              <span className="text-xs text-gray-600">Durasi dalam jam</span>
             </div>
 
             <div className="flex justify-end gap-2">
