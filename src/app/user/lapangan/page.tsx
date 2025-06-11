@@ -4,18 +4,20 @@ import { useState } from "react";
 import Image from "next/image";
 import Link from "next/link";
 
-export default function LapanganPage() {
+interface Lapangan {
+  imageSrc: string;
+  namaLapangan: string;
+  harga: number;
+}
+
+export default function UserDashboard() {
   const [showModal, setShowModal] = useState(false);
-  const [selectedLapangan, setSelectedLapangan] = useState<{
-    imageSrc: string;
-    namaLapangan: string;
-    harga: number;
-  } | null>(null);
+  const [selectedLapangan, setSelectedLapangan] = useState<Lapangan | null>(null);
   const [tanggal, setTanggal] = useState("");
   const [jam, setJam] = useState("");
   const [durasi, setDurasi] = useState("");
 
-  const lapanganData = [
+  const lapanganData: Lapangan[] = [
     {
       imageSrc: "/image/lapangan4.jpg",
       namaLapangan: "Lapangan Emas",
@@ -33,7 +35,7 @@ export default function LapanganPage() {
     },
   ];
 
-  const handlePesanClick = (lapangan: { imageSrc: string; namaLapangan: string; harga: number }) => {
+  const handlePesanClick = (lapangan: Lapangan) => {
     setSelectedLapangan(lapangan);
     setShowModal(true);
   };
@@ -78,7 +80,9 @@ export default function LapanganPage() {
               />
             </div>
             <h3 className="text-md font-semibold">{lapangan.namaLapangan}</h3>
-            <p className="text-lg font-bold mb-4">Rp {lapangan.harga.toLocaleString()}</p>
+            <p className="text-lg font-bold mb-4">
+              Rp {lapangan.harga.toLocaleString()} <span className="text-sm font-normal">/jam</span>
+            </p>
             <div className="flex flex-row gap-2">
               <Link href="/user/lapangan/jadwalLapangan">
                 <button className="border border-green-700 text-green-700 px-4 py-1 rounded hover:bg-green-100 transition">
@@ -120,7 +124,7 @@ export default function LapanganPage() {
               />
             </div>
             <p className="text-center font-bold mb-4">
-              Harga : Rp. {selectedLapangan.harga.toLocaleString()}
+              Harga : Rp. {selectedLapangan.harga.toLocaleString()} /jam
             </p>
 
             <div className="flex flex-col gap-2 mb-4">
