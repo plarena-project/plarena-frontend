@@ -8,6 +8,7 @@ import { Lapangan } from "app/types/Lapangan";
 export default function DataLapanganPage() {
   const [selected, setSelected] = useState<Lapangan | null>(null);
   const [lapanganToDelete, setLapanganToDelete] = useState<Lapangan | null>(null);
+  const [showAddModal, setShowAddModal] = useState(false);
   const [dataLapangan, setDataLapangan] = useState<Lapangan[]>([
     {
       id: 1,
@@ -32,6 +33,15 @@ export default function DataLapanganPage() {
     },
   ]);
 
+  // State untuk form tambah lapangan
+  const [formData, setFormData] = useState({
+    nama: "",
+    harga: "",
+    keterangan: "",
+    foto: "",
+  });
+  const [selectedFile, setSelectedFile] = useState<File | null>(null);
+
   const handleSave = (updated: Lapangan) => {
     const updatedList = dataLapangan.map((item) =>
       item.id === updated.id ? updated : item
@@ -46,6 +56,48 @@ export default function DataLapanganPage() {
     setLapanganToDelete(null);
   };
 
+  const handleAddLapangan = () => {
+    if (!formData.nama || !formData.harga || !formData.keterangan || (!formData.foto && !selectedFile)) {
+      alert("Semua field harus diisi!");
+      return;
+    }
+
+    const newId = Math.max(...dataLapangan.map(item => item.id)) + 1;
+    let fotoUrl = formData.foto;
+    
+    // Jika ada file yang dipilih, buat URL sementara untuk preview
+    if (selectedFile) {
+      fotoUrl = URL.createObjectURL(selectedFile);
+    }
+
+    const newLapangan: Lapangan = {
+      id: newId,
+      nama: formData.nama,
+      harga: formData.harga,
+      keterangan: formData.keterangan,
+      foto: fotoUrl,
+    };
+
+    setDataLapangan([...dataLapangan, newLapangan]);
+    setFormData({ nama: "", harga: "", keterangan: "", foto: "" });
+    setSelectedFile(null);
+    setShowAddModal(false);
+  };
+
+  const handleCloseAddModal = () => {
+    setShowAddModal(false);
+    setFormData({ nama: "", harga: "", keterangan: "", foto: "" });
+    setSelectedFile(null);
+  };
+
+  const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (file) {
+      setSelectedFile(file);
+      setFormData({ ...formData, foto: "" }); // Clear URL input when file is selected
+    }
+  };
+
   return (
     <div className="min-h-screen bg-white px-8 py-12">
       <h1 className="text-center text-3xl font-bold italic mb-10">
@@ -54,7 +106,10 @@ export default function DataLapanganPage() {
       </h1>
 
       <div className="mb-6">
-        <button className="bg-blue-500 hover:bg-blue-600 text-white text-sm px-3 py-1 rounded">
+        <button 
+          onClick={() => setShowAddModal(true)}
+          className="bg-blue-500 hover:bg-blue-600 text-white text-sm px-3 py-1 rounded"
+        >
           Tambah
         </button>
       </div>
@@ -134,6 +189,103 @@ export default function DataLapanganPage() {
                 className="px-4 py-1 bg-red-500 text-white rounded hover:bg-red-600"
               >
                 Hapus
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {showAddModal && (
+        <div className="fixed inset-0 bg-gray-500/50 z-50 flex items-center justify-center">
+          <div className="bg-white p-6 rounded-md shadow-md w-96">
+            <h2 className="text-lg font-semibold text-center mb-4" style={{ color: "#407225" }}>
+              Tambah Lapangan Baru
+            </h2>
+            
+            <div className="space-y-4">
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-1">
+                  Nama Lapangan
+                </label>
+                <input
+                  type="text"
+                  value={formData.nama}
+                  onChange={(e) => setFormData({ ...formData, nama: e.target.value })}
+                  className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                  placeholder="Masukkan nama lapangan"
+                />
+              </div>
+
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-1">
+                  Harga
+                </label>
+                <input
+                  type="text"
+                  value={formData.harga}
+                  onChange={(e) => setFormData({ ...formData, harga: e.target.value })}
+                  className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                  placeholder="Masukkan harga (contoh: 10.000)"
+                />
+              </div>
+
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-1">
+                  Keterangan
+                </label>
+                <textarea
+                  value={formData.keterangan}
+                  onChange={(e) => setFormData({ ...formData, keterangan: e.target.value })}
+                  className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                  placeholder="Masukkan keterangan lapangan"
+                  rows={3}
+                />
+              </div>
+
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-1">
+                  Foto
+                </label>
+                <div className="space-y-2">
+                  <input
+                    type="file"
+                    accept="image/*"
+                    onChange={handleFileChange}
+                    className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                  />
+                  <div className="text-center text-sm text-gray-500">atau</div>
+                  <input
+                    type="text"
+                    value={formData.foto}
+                    onChange={(e) => {
+                      setFormData({ ...formData, foto: e.target.value });
+                      setSelectedFile(null); // Clear file when URL is entered
+                    }}
+                    className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                    placeholder="Masukkan URL foto"
+                    disabled={!!selectedFile}
+                  />
+                  {selectedFile && (
+                    <div className="text-sm text-green-600">
+                      File dipilih: {selectedFile.name}
+                    </div>
+                  )}
+                </div>
+              </div>
+            </div>
+
+            <div className="flex justify-end gap-4 mt-6">
+              <button
+                onClick={handleCloseAddModal}
+                className="px-4 py-2 bg-gray-300 text-gray-700 rounded hover:bg-gray-400"
+              >
+                Batal
+              </button>
+              <button
+                onClick={handleAddLapangan}
+                className="px-4 py-2 bg-blue-500 text-white rounded hover:bg-blue-600"
+              >
+                Tambah
               </button>
             </div>
           </div>

@@ -30,6 +30,15 @@ export default function DataAdminPage() {
 
   const [selectedAdmin, setSelectedAdmin] = useState<any | null>(null);
   const [showDeleteModal, setShowDeleteModal] = useState(false);
+  const [showAddModal, setShowAddModal] = useState(false);
+
+  // State untuk form tambah admin
+  const [formData, setFormData] = useState({
+    username: '',
+    namaLengkap: '',
+    email: '',
+    noHp: '',
+  });
 
   const handleDelete = () => {
     if (selectedAdmin) {
@@ -55,6 +64,31 @@ export default function DataAdminPage() {
     setSelectedAdmin(null);
   };
 
+  const handleAddAdmin = () => {
+    if (!formData.username || !formData.namaLengkap || !formData.email || !formData.noHp) {
+      alert("Semua field harus diisi!");
+      return;
+    }
+
+    const newId = Math.max(...dataAdmin.map(item => item.id)) + 1;
+    const newAdmin = {
+      id: newId,
+      username: formData.username,
+      namaLengkap: formData.namaLengkap,
+      email: formData.email,
+      noHp: formData.noHp,
+    };
+
+    setDataAdmin([...dataAdmin, newAdmin]);
+    setFormData({ username: '', namaLengkap: '', email: '', noHp: '' });
+    setShowAddModal(false);
+  };
+
+  const handleCloseAddModal = () => {
+    setShowAddModal(false);
+    setFormData({ username: '', namaLengkap: '', email: '', noHp: '' });
+  };
+
   return (
     <div className="min-h-screen bg-white px-8 py-12">
       <h1 className="text-center text-3xl font-bold italic mb-10">
@@ -63,7 +97,10 @@ export default function DataAdminPage() {
       </h1>
 
       <div className="mb-6">
-        <button className="bg-blue-500 hover:bg-blue-600 text-white text-sm px-3 py-1 rounded">
+        <button 
+          onClick={() => setShowAddModal(true)}
+          className="bg-blue-500 hover:bg-blue-600 text-white text-sm px-3 py-1 rounded"
+        >
           Tambah Admin
         </button>
       </div>
@@ -194,6 +231,86 @@ export default function DataAdminPage() {
                 className="bg-red-500 text-white px-4 py-2 rounded hover:bg-red-600"
               >
                 Hapus
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* Modal Tambah Admin */}
+      {showAddModal && (
+        <div className="fixed inset-0 bg-gray-500/50 z-50 flex items-center justify-center">
+          <div className="bg-white p-6 rounded-md shadow-md w-96">
+            <h2 className="text-lg font-semibold text-center mb-4" style={{ color: "#407225" }}>
+              Tambah Admin Baru
+            </h2>
+            
+            <div className="space-y-4">
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-1">
+                  Username
+                </label>
+                <input
+                  type="text"
+                  value={formData.username}
+                  onChange={(e) => setFormData({ ...formData, username: e.target.value })}
+                  className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                  placeholder="Masukkan username"
+                />
+              </div>
+
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-1">
+                  Nama Lengkap
+                </label>
+                <input
+                  type="text"
+                  value={formData.namaLengkap}
+                  onChange={(e) => setFormData({ ...formData, namaLengkap: e.target.value })}
+                  className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                  placeholder="Masukkan nama lengkap"
+                />
+              </div>
+
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-1">
+                  Email
+                </label>
+                <input
+                  type="email"
+                  value={formData.email}
+                  onChange={(e) => setFormData({ ...formData, email: e.target.value })}
+                  className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                  placeholder="Masukkan email"
+                />
+              </div>
+
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-1">
+                  No HP
+                </label>
+                <input
+                  type="text"
+                  value={formData.noHp}
+                  onChange={(e) => setFormData({ ...formData, noHp: e.target.value })}
+                  className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                  placeholder="Masukkan nomor HP"
+                />
+              </div>
+            </div>
+
+            <div className="flex justify-end gap-4 mt-6">
+              <button
+                onClick={handleCloseAddModal}
+                className="px-4 py-2 bg-gray-300 text-gray-700 rounded hover:bg-gray-400"
+              >
+                Batal
+              </button>
+              <button
+                onClick={handleAddAdmin}
+                className="px-4 py-2 bg-blue-500 text-white rounded hover:bg-blue-600"
+              >
+                Tambah
               </button>
             </div>
           </div>
